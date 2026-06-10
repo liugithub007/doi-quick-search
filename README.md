@@ -66,17 +66,19 @@ Steps:
 3. 等待页面自动查询，或点击查询按钮。
 4. 在结果区域复制 DOI，或打开 DOI 链接。
 
-Advantages:
+Advantages and limitations:
 
-优势：
+优势与限制：
 
 - No download or setup required.
 - Works on any modern browser.
 - Always uses the latest deployed version.
+- Requires a network environment that can access both Vercel and the Crossref API.
 
 - 无需下载或配置。
 - 可在任何现代浏览器中使用。
 - 始终使用已部署的最新版本。
+- 需要能够访问 Vercel 和 Crossref API 的网络环境；在部分地区可能需要科学上网环境。
 
 ### Option 2: Local Download / 方式二：下载到本地使用
 
@@ -98,17 +100,19 @@ Expected DOI / 预期 DOI：
 10.1109/cvpr.2016.90
 ```
 
-Advantages:
+Advantages and limitations:
 
-优势：
+优势与限制：
 
 - Faster for repeated use because the browser cache stays on your local device.
 - Can be kept as a lightweight personal tool without opening GitHub or Vercel first.
 - No build step, package installation, or server is required.
+- Opening the local page does not require access to Vercel or GitHub; DOI lookup still requires access to the Crossref API.
 
 - 重复查询速度更快，因为浏览器缓存会保存在本地设备中。
 - 可以作为轻量的个人工具保存，不需要每次先打开 GitHub 或 Vercel。
 - 不需要构建步骤、依赖安装或服务器。
+- 打开本地页面不需要访问 Vercel 或 GitHub，也不需要科学上网环境；但实际查询 DOI 时仍需要能够访问 Crossref API。
 
 ## Data Source / 数据来源
 
