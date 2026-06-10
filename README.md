@@ -44,28 +44,27 @@ Expected DOI / 预期 DOI：
 10.1109/cvpr.2016.90
 ```
 
-## Deploy to Vercel / 部署到 Vercel
+## Web Version / 在线网页版
 
-This project can be deployed as a static website on the Vercel Hobby plan.
+Open the hosted web version here:
 
-本项目可以作为静态网站部署到 Vercel Hobby 免费计划。
+在线网页版地址：
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fliugithub007%2Fdoi-quick-search&project-name=doi-quick-search&repository-name=doi-quick-search)
+https://doi-quick-search1.vercel.app
 
-Recommended Vercel settings:
+How to use:
 
-推荐的 Vercel 设置：
+使用方法：
 
-```text
-Framework Preset: Other
-Build Command: leave empty / 留空
-Output Directory: leave empty / 留空
-Install Command: leave empty / 留空
-```
+1. Open the web page in a browser.
+2. Paste or type a complete English paper title.
+3. Wait briefly for the automatic search, or click the search button.
+4. Copy the DOI or open the DOI link from the result panel.
 
-After deployment, Vercel will provide a public `*.vercel.app` URL. If you connect the GitHub repository to Vercel, future commits to the default branch can be deployed automatically.
-
-部署完成后，Vercel 会提供一个公开的 `*.vercel.app` 网址。如果将 GitHub 仓库连接到 Vercel，后续推送到默认分支的提交可以自动部署。
+1. 在浏览器中打开网页。
+2. 粘贴或输入完整的英文论文标题。
+3. 等待页面自动查询，或点击查询按钮。
+4. 在结果区域复制 DOI，或打开 DOI 链接。
 
 ## Data Source / 数据来源
 
