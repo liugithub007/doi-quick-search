@@ -1,0 +1,594 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>论文 DOI 快速查询</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f7f8f5;
+      --panel: #ffffff;
+      --ink: #1e2528;
+      --muted: #637076;
+      --line: #dfe5df;
+      --accent: #006d5b;
+      --accent-2: #2457a7;
+      --warn: #9a4f00;
+      --error: #a22a2a;
+      --shadow: 0 18px 50px rgba(37, 48, 54, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background:
+        linear-gradient(135deg, rgba(0, 109, 91, 0.08), transparent 34%),
+        linear-gradient(315deg, rgba(36, 87, 167, 0.08), transparent 38%),
+        var(--bg);
+    }
+
+    main {
+      width: min(960px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 56px 0 36px;
+    }
+
+    .shell {
+      display: grid;
+      gap: 22px;
+    }
+
+    header {
+      display: grid;
+      gap: 10px;
+      max-width: 780px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(34px, 5vw, 64px);
+      line-height: 1.02;
+      letter-spacing: 0;
+    }
+
+    .lead {
+      margin: 0;
+      color: var(--muted);
+      font-size: 18px;
+      line-height: 1.55;
+      max-width: 680px;
+    }
+
+    .search-panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      padding: 18px;
+      display: grid;
+      gap: 14px;
+    }
+
+    label {
+      font-size: 14px;
+      font-weight: 700;
+      color: #2d383c;
+    }
+
+    .input-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: stretch;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 96px;
+      resize: vertical;
+      border: 1px solid #c8d2cc;
+      border-radius: 8px;
+      padding: 15px 16px;
+      font: inherit;
+      font-size: 17px;
+      line-height: 1.45;
+      color: var(--ink);
+      outline: none;
+      transition: border-color 120ms ease, box-shadow 120ms ease;
+    }
+
+    textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px rgba(0, 109, 91, 0.14);
+    }
+
+    button {
+      border: 0;
+      border-radius: 8px;
+      padding: 0 20px;
+      min-width: 120px;
+      background: var(--accent);
+      color: #fff;
+      font: inherit;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform 120ms ease, background 120ms ease;
+    }
+
+    button:hover {
+      background: #005848;
+    }
+
+    button:active {
+      transform: translateY(1px);
+    }
+
+    button:disabled {
+      cursor: not-allowed;
+      background: #8aa29b;
+    }
+
+    .meta-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .status {
+      min-height: 22px;
+      font-weight: 700;
+    }
+
+    .status.loading {
+      color: var(--accent-2);
+    }
+
+    .status.error {
+      color: var(--error);
+    }
+
+    .status.warn {
+      color: var(--warn);
+    }
+
+    .result {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 20px;
+      display: none;
+      gap: 16px;
+    }
+
+    .result.visible {
+      display: grid;
+    }
+
+    .doi-box {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      align-items: center;
+      gap: 10px;
+      padding: 14px;
+      border: 1px solid #cfd8d2;
+      border-radius: 8px;
+      background: #f9fbf9;
+    }
+
+    .doi {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: clamp(18px, 3vw, 28px);
+      font-weight: 800;
+      overflow-wrap: anywhere;
+    }
+
+    .small-button {
+      min-width: 0;
+      padding: 10px 13px;
+      background: #24343a;
+      font-size: 14px;
+      white-space: nowrap;
+    }
+
+    .small-button.secondary {
+      background: #e9efec;
+      color: #1f2d31;
+      border: 1px solid #cdd8d2;
+    }
+
+    .paper-title {
+      margin: 0;
+      font-size: 18px;
+      line-height: 1.45;
+      font-weight: 800;
+    }
+
+    .paper-meta {
+      margin: 4px 0 0;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .confidence {
+      display: inline-flex;
+      align-items: center;
+      width: fit-content;
+      gap: 8px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: #eaf4f1;
+      color: #0b5f50;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .alternatives {
+      display: none;
+      gap: 8px;
+    }
+
+    .alternatives.visible {
+      display: grid;
+    }
+
+    .alt-list {
+      display: grid;
+      gap: 8px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .alt-list li {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 11px 12px;
+      background: #fff;
+    }
+
+    .alt-list a {
+      color: var(--accent-2);
+      font-weight: 800;
+      text-decoration: none;
+      overflow-wrap: anywhere;
+    }
+
+    .alt-title {
+      display: block;
+      color: var(--ink);
+      margin-bottom: 4px;
+      line-height: 1.35;
+    }
+
+    .tips {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .tip {
+      border-left: 4px solid var(--accent);
+      padding: 10px 12px;
+      background: rgba(255, 255, 255, 0.72);
+      border-radius: 0 8px 8px 0;
+      color: var(--muted);
+      line-height: 1.45;
+      font-size: 14px;
+    }
+
+    .tip strong {
+      color: var(--ink);
+    }
+
+    @media (max-width: 720px) {
+      main {
+        width: min(100% - 22px, 960px);
+        padding-top: 30px;
+      }
+
+      .input-row,
+      .doi-box,
+      .tips {
+        grid-template-columns: 1fr;
+      }
+
+      button {
+        min-height: 48px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="shell">
+      <header>
+        <h1>论文 DOI 快速查询</h1>
+        <p class="lead">输入英文论文标题后自动检索，最可能的 DOI 会立即显示。结果来自 Crossref，适合期刊论文、会议论文和书章节。</p>
+      </header>
+
+      <section class="search-panel" aria-label="DOI 查询">
+        <label for="titleInput">英文论文名</label>
+        <div class="input-row">
+          <textarea id="titleInput" spellcheck="false" autocomplete="off" placeholder="例如：Attention Is All You Need"></textarea>
+          <button id="searchButton" type="button">查询</button>
+        </div>
+        <div class="meta-row">
+          <span id="status" class="status">粘贴或输入标题即可开始。</span>
+          <span id="speed">缓存已启用</span>
+        </div>
+      </section>
+
+      <section id="result" class="result" aria-live="polite">
+        <span id="confidence" class="confidence">高匹配</span>
+        <div class="doi-box">
+          <span id="doi" class="doi"></span>
+          <button id="copyButton" class="small-button" type="button">复制</button>
+          <a id="doiLink" class="small-button secondary" href="#" target="_blank" rel="noreferrer">打开</a>
+        </div>
+        <div>
+          <p id="matchedTitle" class="paper-title"></p>
+          <p id="matchedMeta" class="paper-meta"></p>
+        </div>
+        <div id="alternatives" class="alternatives">
+          <strong>其他可能结果</strong>
+          <ul id="altList" class="alt-list"></ul>
+        </div>
+      </section>
+
+      <section class="tips" aria-label="查询提示">
+        <div class="tip"><strong>最快方式</strong><br>直接粘贴完整英文标题，页面会自动开始查询。</div>
+        <div class="tip"><strong>更准结果</strong><br>删除副标题外的页码、作者、期刊名等额外信息。</div>
+        <div class="tip"><strong>重复查询</strong><br>查过的标题会缓存在本机，下次几乎即时返回。</div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    const API = "https://api.crossref.org/works";
+    const CACHE_KEY = "doi-title-cache-v1";
+    const DEBOUNCE_MS = 260;
+
+    const input = document.querySelector("#titleInput");
+    const button = document.querySelector("#searchButton");
+    const statusEl = document.querySelector("#status");
+    const speedEl = document.querySelector("#speed");
+    const resultEl = document.querySelector("#result");
+    const doiEl = document.querySelector("#doi");
+    const doiLink = document.querySelector("#doiLink");
+    const copyButton = document.querySelector("#copyButton");
+    const matchedTitle = document.querySelector("#matchedTitle");
+    const matchedMeta = document.querySelector("#matchedMeta");
+    const confidenceEl = document.querySelector("#confidence");
+    const alternativesEl = document.querySelector("#alternatives");
+    const altList = document.querySelector("#altList");
+
+    let debounceTimer = 0;
+    let activeController = null;
+    let lastQuery = "";
+    let activeDoi = "";
+
+    const cache = readCache();
+
+    function readCache() {
+      try {
+        return JSON.parse(localStorage.getItem(CACHE_KEY)) || {};
+      } catch {
+        return {};
+      }
+    }
+
+    function writeCache() {
+      try {
+        const keys = Object.keys(cache);
+        if (keys.length > 80) {
+          keys.slice(0, keys.length - 80).forEach((key) => delete cache[key]);
+        }
+        localStorage.setItem(CACHE_KEY, JSON.stringify(cache));
+      } catch {
+        // 查询本身不依赖缓存，浏览器禁用 localStorage 时直接忽略。
+      }
+    }
+
+    function normalizeTitle(value) {
+      return value
+        .toLowerCase()
+        .replace(/[“”‘’"'`´]/g, "")
+        .replace(/[^a-z0-9]+/g, " ")
+        .trim()
+        .replace(/\s+/g, " ");
+    }
+
+    function titleFromItem(item) {
+      return Array.isArray(item.title) && item.title[0] ? item.title[0] : "未返回标题";
+    }
+
+    function yearFromItem(item) {
+      const parts = item.published?.["date-parts"] || item.issued?.["date-parts"];
+      return Array.isArray(parts) && parts[0] && parts[0][0] ? String(parts[0][0]) : "";
+    }
+
+    function scoreItem(item, queryNorm) {
+      const itemNorm = normalizeTitle(titleFromItem(item));
+      if (!itemNorm) return 0;
+      if (itemNorm === queryNorm) return 100;
+      if (itemNorm.includes(queryNorm) || queryNorm.includes(itemNorm)) return 86;
+
+      const queryWords = new Set(queryNorm.split(" ").filter(Boolean));
+      const itemWords = new Set(itemNorm.split(" ").filter(Boolean));
+      let overlap = 0;
+      queryWords.forEach((word) => {
+        if (itemWords.has(word)) overlap += 1;
+      });
+      const coverage = overlap / Math.max(queryWords.size, 1);
+      const balance = overlap / Math.max(itemWords.size, 1);
+      return Math.round((coverage * 70) + (balance * 24));
+    }
+
+    function setStatus(message, tone = "") {
+      statusEl.textContent = message;
+      statusEl.className = `status ${tone}`.trim();
+    }
+
+    function clearResult() {
+      resultEl.classList.remove("visible");
+      activeDoi = "";
+      altList.innerHTML = "";
+      alternativesEl.classList.remove("visible");
+    }
+
+    function renderResult(result, source, elapsedMs) {
+      const item = result.best;
+      const doi = item.DOI;
+      activeDoi = doi;
+
+      doiEl.textContent = doi;
+      doiLink.href = `https://doi.org/${doi}`;
+      matchedTitle.textContent = titleFromItem(item);
+
+      const year = yearFromItem(item);
+      const type = item.type ? item.type.replaceAll("-", " ") : "";
+      matchedMeta.textContent = [year, type, item.publisher].filter(Boolean).join(" · ") || "Crossref 未返回更多元数据";
+
+      const score = result.score;
+      confidenceEl.textContent = score >= 92 ? "高匹配" : score >= 78 ? "较可能匹配" : "请核对标题";
+
+      altList.innerHTML = "";
+      const alternatives = result.items
+        .filter((candidate) => candidate.DOI && candidate.DOI !== doi)
+        .slice(0, 4);
+
+      alternatives.forEach((candidate) => {
+        const li = document.createElement("li");
+        const title = document.createElement("span");
+        const link = document.createElement("a");
+        title.className = "alt-title";
+        title.textContent = titleFromItem(candidate);
+        link.href = `https://doi.org/${candidate.DOI}`;
+        link.target = "_blank";
+        link.rel = "noreferrer";
+        link.textContent = candidate.DOI;
+        li.append(title, link);
+        altList.append(li);
+      });
+
+      alternativesEl.classList.toggle("visible", alternatives.length > 0);
+      resultEl.classList.add("visible");
+
+      const sourceLabel = source === "cache" ? "本机缓存" : "Crossref";
+      speedEl.textContent = `${sourceLabel} · ${elapsedMs} ms`;
+      setStatus("已找到 DOI。");
+    }
+
+    async function lookup(title) {
+      const cleanTitle = title.trim();
+      const queryNorm = normalizeTitle(cleanTitle);
+
+      if (queryNorm.length < 8) {
+        clearResult();
+        setStatus("请输入更完整的论文标题。", "warn");
+        speedEl.textContent = "缓存已启用";
+        return;
+      }
+
+      if (queryNorm === lastQuery && activeDoi) return;
+      lastQuery = queryNorm;
+
+      const started = performance.now();
+      if (cache[queryNorm]) {
+        renderResult(cache[queryNorm], "cache", Math.round(performance.now() - started));
+        return;
+      }
+
+      if (activeController) activeController.abort();
+      activeController = new AbortController();
+      button.disabled = true;
+      setStatus("正在查询...", "loading");
+      speedEl.textContent = "联网检索中";
+
+      const params = new URLSearchParams({
+        "query.title": cleanTitle,
+        rows: "8",
+        select: "DOI,title,type,publisher,issued,published,score",
+        sort: "score",
+        order: "desc"
+      });
+
+      try {
+        const response = await fetch(`${API}?${params.toString()}`, {
+          signal: activeController.signal,
+          headers: { Accept: "application/json" }
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+
+        const data = await response.json();
+        const items = (data.message?.items || []).filter((item) => item.DOI);
+
+        if (!items.length) {
+          clearResult();
+          setStatus("没有找到 DOI。请核对标题或换用完整标题。", "warn");
+          speedEl.textContent = `${Math.round(performance.now() - started)} ms`;
+          return;
+        }
+
+        const ranked = items
+          .map((item) => ({ item, matchScore: scoreItem(item, queryNorm) }))
+          .sort((a, b) => b.matchScore - a.matchScore || (b.item.score || 0) - (a.item.score || 0));
+
+        const result = {
+          best: ranked[0].item,
+          score: ranked[0].matchScore,
+          items: ranked.map((entry) => entry.item),
+          savedAt: Date.now()
+        };
+
+        cache[queryNorm] = result;
+        writeCache();
+        renderResult(result, "network", Math.round(performance.now() - started));
+      } catch (error) {
+        if (error.name === "AbortError") return;
+        clearResult();
+        setStatus("查询失败。请检查网络后重试。", "error");
+        speedEl.textContent = "未完成";
+      } finally {
+        button.disabled = false;
+      }
+    }
+
+    function scheduleLookup() {
+      window.clearTimeout(debounceTimer);
+      debounceTimer = window.setTimeout(() => lookup(input.value), DEBOUNCE_MS);
+    }
+
+    input.addEventListener("input", scheduleLookup);
+    input.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" && (event.metaKey || event.ctrlKey)) {
+        event.preventDefault();
+        lookup(input.value);
+      }
+    });
+    button.addEventListener("click", () => lookup(input.value));
+    copyButton.addEventListener("click", async () => {
+      if (!activeDoi) return;
+      try {
+        await navigator.clipboard.writeText(activeDoi);
+        setStatus("DOI 已复制。");
+      } catch {
+        setStatus("复制失败，请手动选择 DOI。", "warn");
+      }
+    });
+  </script>
+</body>
+</html>
