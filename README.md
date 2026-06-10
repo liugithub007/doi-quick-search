@@ -1,5 +1,15 @@
 # DOI Quick Search / DOI 快速查询
 
+## Online Web App / 在线网页版
+
+**Use it here / 立即使用：**
+
+**https://doi-quick-search1.vercel.app**
+
+Open the link above in any modern browser, paste an English paper title, and the DOI result will appear automatically.
+
+在现代浏览器中打开上方链接，粘贴英文论文标题后，页面会自动返回 DOI 查询结果。
+
 A fast, single-page DOI lookup tool for English academic paper titles.
 
 一个快速、单页式的 DOI 查询工具，适合根据英文论文标题查找 DOI。
@@ -44,13 +54,7 @@ Expected DOI / 预期 DOI：
 10.1109/cvpr.2016.90
 ```
 
-## Web Version / 在线网页版
-
-Open the hosted web version here:
-
-在线网页版地址：
-
-https://doi-quick-search1.vercel.app
+## Web Usage / 网页版使用说明
 
 How to use:
 
