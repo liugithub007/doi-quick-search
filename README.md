@@ -40,9 +40,53 @@ Paste or type an English paper title, and the page searches Crossref for the mos
 
 ## Usage / 使用方法
 
-Open `index.html` in a browser, then enter a paper title such as:
+You can use DOI Quick Search in two ways: the hosted web version or a local downloaded copy.
 
-在浏览器中打开 `index.html`，然后输入英文论文标题，例如：
+你可以通过两种方式使用 DOI 快速查询：在线网页版，或下载到本地后使用。
+
+### Option 1: Hosted Web Version / 方式一：在线网页版
+
+Open the hosted version:
+
+打开在线网页版：
+
+**https://doi-quick-search1.vercel.app**
+
+Steps:
+
+步骤：
+
+1. Open the web page in a browser.
+2. Paste or type a complete English paper title.
+3. Wait briefly for the automatic search, or click the search button.
+4. Copy the DOI or open the DOI link from the result panel.
+
+1. 在浏览器中打开网页。
+2. 粘贴或输入完整的英文论文标题。
+3. 等待页面自动查询，或点击查询按钮。
+4. 在结果区域复制 DOI，或打开 DOI 链接。
+
+Advantages:
+
+优势：
+
+- No download or setup required.
+- Works on any modern browser.
+- Always uses the latest deployed version.
+
+- 无需下载或配置。
+- 可在任何现代浏览器中使用。
+- 始终使用已部署的最新版本。
+
+### Option 2: Local Download / 方式二：下载到本地使用
+
+Download the repository or just save `index.html`, then open `index.html` directly in your browser.
+
+下载本仓库，或单独保存 `index.html` 文件，然后直接用浏览器打开 `index.html`。
+
+Example title:
+
+示例标题：
 
 ```text
 Deep Residual Learning for Image Recognition
@@ -54,21 +98,17 @@ Expected DOI / 预期 DOI：
 10.1109/cvpr.2016.90
 ```
 
-## Web Usage / 网页版使用说明
+Advantages:
 
-How to use:
+优势：
 
-使用方法：
+- Faster for repeated use because the browser cache stays on your local device.
+- Can be kept as a lightweight personal tool without opening GitHub or Vercel first.
+- No build step, package installation, or server is required.
 
-1. Open the web page in a browser.
-2. Paste or type a complete English paper title.
-3. Wait briefly for the automatic search, or click the search button.
-4. Copy the DOI or open the DOI link from the result panel.
-
-1. 在浏览器中打开网页。
-2. 粘贴或输入完整的英文论文标题。
-3. 等待页面自动查询，或点击查询按钮。
-4. 在结果区域复制 DOI，或打开 DOI 链接。
+- 重复查询速度更快，因为浏览器缓存会保存在本地设备中。
+- 可以作为轻量的个人工具保存，不需要每次先打开 GitHub 或 Vercel。
+- 不需要构建步骤、依赖安装或服务器。
 
 ## Data Source / 数据来源
 
